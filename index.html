@@ -1745,6 +1745,256 @@ a{ color:inherit; }
     pointer-events: none;
     z-index: 1;
 }
+
+  /* ======================================================================
+     23. DEVICE LAYER — phones (Android + iPhone), tablets, desktop
+     ----------------------------------------------------------------------
+     Appended last on purpose, in the same spirit as the royal layer above:
+     it wins on source order, it is self-contained, and deleting this one
+     block returns the invite to exactly how it behaved before.
+
+     The rule it follows: the desktop design is CORRECT and is not being
+     redesigned. Everything below either (a) keeps a value identical on a
+     large screen while letting it shrink on a small one, or (b) fixes a
+     browser quirk that only shows up on a real handset.
+     ====================================================================== */
+
+  /* ---------- a. the page must never scroll sideways ---------- */
+  /* Safari on iOS ignores overflow-x when it is only on <body>, so it goes
+     on the root element too. text-size-adjust stops iOS inflating type of
+     its own accord when the phone is turned to landscape. */
+  html{
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+  body{ width:100%; max-width:100%; overflow-x:hidden; }
+  /* a safety net: no single image or frame can widen the document again */
+  img, svg, video, iframe{ max-width:100%; }
+
+  /* ---------- b. the crest — the one real breakage ---------- */
+  /* This was:  width: clamp(850px, 55vw, 900px)
+     A clamp whose FLOOR is 850px never goes below 850px. On a 390px phone
+     the swastik artwork stayed 850px wide and dragged the document out to
+     ~880px; every other element then laid itself out against that phantom
+     width, which is why the whole invite looked shoved to the left with a
+     sideways scrollbar on a phone. It was invisible on a desktop because
+     the container happened to be wide enough to hide it.
+
+     Now it fills its column and caps at exactly the width it reached
+     before, so anything above ~1030px renders pixel-identical.
+
+     The upward pull that tucks the medallion over the header was a fixed
+     -7.1em (-114px). As a percentage it resolves against the container
+     width instead, so the overlap stays in proportion at every screen size
+     rather than swallowing the artwork on a phone.
+
+     The percentages below are calibrated against the REAL hero column,
+     which is 832px and not 900px: #hero is a <section>, so it inherits
+     max-width:960px and then loses 64px of padding either side. -13.65%
+     and 9.62% of 832px reproduce the -114px and 80px the design has now. */
+  .prabha{ padding:min(80px, 9.62%) 0 clamp(0.6rem, 2vw, 1.2rem); }
+  .prabha .crest{
+    width:min(100%, 900px);
+    margin-top:-13.65%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  /* ---------- c. two clamps that were inside out ---------- */
+  /* clamp(100px, 11vw, 72px) has its minimum ABOVE its maximum, so it
+     always returned the 100px floor and never scaled at all. Both emblems
+     therefore stayed 100px wide from a 4K monitor down to a phone. Below
+     560px an old override rescued them, but between 561px and ~1030px —
+     i.e. every tablet — four 100px emblems plus the date needed more room
+     than the column had, and the date row was being clipped.
+     8vw still reaches the full 100px at any viewport of 1250px or wider —
+     so 1280, 1366, 1440, 1536 and 1920 are all unchanged — and only starts
+     scaling below that, where the room genuinely runs out. */
+  .kalash{ width:clamp(40px, 8vw, 100px); }
+  .lamp  { width:clamp(34px, 8vw, 100px); }
+  @media (max-width:560px){
+    .kalash{ width:clamp(30px, 9vw, 46px); }
+    .lamp  { width:clamp(26px, 7.5vw, 40px); }
+    .date-row{ gap:clamp(0.25rem, 1.6vw, 0.5rem); }
+    .d-rule{ width:clamp(18px, 5vw, 40px); }
+  }
+
+  /* ---------- d. the invocation ---------- */
+  /* Three tracked words plus a 12vw gap either side need about 640px before
+     they stop colliding; the old rule only stacked them below 520px, so
+     between 520 and 640 the right-hand word ran into the page edge. */
+  @media (max-width:660px){
+    .blessing-line{
+      flex-direction:column; align-items:center;
+      gap:0.55rem; margin-top:0.4rem;
+    }
+    .blessing-line > span,
+    .blessing-line .bl-l,
+    .blessing-line .bl-c,
+    .blessing-line .bl-r{ text-align:center; align-items:center; }
+  }
+
+  /* ---------- e. the temple watermarks in the venue card ---------- */
+  /* Fixed at 180px each, they were wider than half a phone screen and sat
+     at 0.85 opacity directly behind the address. 19vw reaches 180px on a
+     desktop, so nothing changes there; on a phone they step back into
+     being a watermark rather than a picture behind the type. */
+  .venue-bg-left img,
+  .venue-bg-right img{ width:clamp(66px, 19vw, 180px); }
+  @media (max-width:760px){
+    .venue-bg-left, .venue-bg-right{ opacity:0.3; }
+    .venue-bg-left { left:2px; }
+    .venue-bg-right{ right:2px; }
+  }
+
+  /* ---------- f. the two ornaments that crowd a small screen ---------- */
+  @media (max-width:420px){
+    /* 88px in each top corner is a quarter of a 360px phone */
+    .page-corners .cnr{ width:clamp(58px, 20vw, 88px); }
+  }
+  /* two peacocks at 140px left the footer signature nowhere to go on a
+     tablet; this replaces the old 560px-only rule with a continuous one */
+  @media (max-width:760px){
+    .peacock{ width:clamp(56px, 15vw, 120px); }
+    .footer-crest{ gap:clamp(0.4rem, 3.5vw, 1.4rem); }
+    footer .script{ font-size:clamp(1.5rem, 5.6vw, 2.2rem); }
+    footer p{ font-size:0.66rem; letter-spacing:0.12em; }
+  }
+
+  /* ---------- g. a selector collision ---------- */
+  /* .diya was used twice — once for the lit lamps at the doorway
+     threshold, once for the ornament above the parents. The second rule
+     silently resized the first. Both are now scoped and both scale. */
+  .threshold .diya{ width:clamp(24px, 6.5vw, 30px); }
+  section > img.diya{ width:clamp(22px, 5vw, 26px); margin:0 auto 0.6rem; }
+
+  /* ---------- h. form fields on iOS ---------- */
+  /* Safari zooms the whole page in when a focused field is under 16px, and
+     then leaves the invite zoomed. The appearance reset removes the inner
+     shadow iOS draws inside inputs.
+
+     This keys off the POINTER, not the width. A width query misses the
+     iPad Pro, which reports 1024px in portrait but is still iOS Safari and
+     still zooms; and it would needlessly inflate the fields for a desktop
+     mouse user, who never triggers the zoom at all. */
+  input, textarea{
+    -webkit-appearance:none; appearance:none;
+    border-radius:4px;
+  }
+  @media (pointer:coarse){
+    input, textarea{ font-size:16px; }
+  }
+
+  /* ---------- i. touch ---------- */
+  @media (pointer:coarse){
+    /* comfortable targets — 44px is the figure both Apple and Google use */
+    .pill{ padding:0.72rem 1.15rem; }
+    .btn { padding:0.78rem 1.6rem; }
+    #audio-toggle{ width:50px; height:50px; }
+    .dwaram, .pill, #audio-toggle, button[type="submit"]{
+      -webkit-tap-highlight-color:transparent;
+    }
+  }
+  /* a tap on a phone leaves :hover latched on until you tap elsewhere, so
+     the hover states are neutralised where there is no real pointer */
+  @media (hover:none){
+    .dwaram:hover{ transform:none; }
+    .btn:hover{
+      background-image:none; border-color:var(--maroon); color:var(--maroon);
+    }
+    .btn-solid:hover{
+      background:linear-gradient(180deg, #9d2036, var(--maroon));
+      border-color:var(--maroon-ink); color:var(--ivory);
+    }
+    button[type="submit"]:hover{ background-position:0% 0; }
+  }
+
+  /* ---------- j. scrolling smoothly on a mid-range handset ---------- */
+  /* Two things were costing frames on a phone:
+       - a live blur() on every revealing element, recomputed each frame
+       - a fixed, full-screen multiply layer over a scrolling document,
+         which forces the whole viewport to re-composite every frame
+     The reveal keeps its fade and its movement; the paper grain keeps its
+     texture. Only the two expensive operations are dropped, and only on
+     touch devices. */
+  @media (pointer:coarse){
+    [data-reveal]{ filter:none; will-change:transform, opacity; }
+    body::after{ mix-blend-mode:normal; opacity:0.10; }
+    #envelope-screen::before{ width:190vmax; height:190vmax; animation-duration:140s; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+
+  /* ---------- k. viewport units on older handsets ---------- */
+  /* svh (the viewport with the browser chrome showing) is the right unit
+     here — it is what stops the doorway being cut off behind Chrome's
+     address bar — but it needs Android WebView 108+ / iOS 15.4+. Each
+     rule now states a vh version first; browsers that don't know svh keep
+     the first line, newer ones take the second. */
+  #hero{
+    min-height:calc(100vh - var(--header-h, 9rem));
+    min-height:calc(100svh - var(--header-h, 9rem));
+  }
+  .dwaram{
+    width:min(92vw, 600px, 42vh);
+    width:min(92vw, 600px, 42svh);
+  }
+  @media (max-height:800px){
+    .dwaram{ width:min(92vw, 600px, 39vh); width:min(92vw, 600px, 39svh); }
+  }
+  @media (max-height:660px){
+    .dwaram{ width:min(92vw, 600px, 39vh); width:min(92vw, 600px, 39svh); }
+  }
+  @media (max-height:520px){
+    .dwaram{ width:min(92vw, 600px, 46vh); width:min(92vw, 600px, 46svh); }
+  }
+
+  /* ---------- l. reserving space for artwork ---------- */
+  /* Several images have their src set by JavaScript, and the ones below the
+     fold are now lazy-loaded. Neither kind has a size the browser can know
+     in advance, so the page reflowed as each file landed — on a phone on
+     mobile data that reads as the invite jumping under your thumb while you
+     scroll. Stating the ratio lets the browser reserve the right box up
+     front. "auto" first means the real file still wins once it arrives. */
+  .crest img      { aspect-ratio:auto 1536/1024; }
+  .kalash         { aspect-ratio:auto 197/297; }
+  .lamp           { aspect-ratio:auto 153/323; }
+  .peacock        { aspect-ratio:auto 1184/1328; }
+  .parents-lotus  { aspect-ratio:auto 1550/1968; }
+  .cd-ic img      { aspect-ratio:auto 147/138; }
+  .page-corners .cnr img{ aspect-ratio:auto 1/1; }
+
+  /* ---------- m. notched phones ---------- */
+  /* env() returns 0 unless the page opts into the full screen, so this is
+     inert today and correct the moment viewport-fit=cover is added. */
+  #audio-toggle{
+    bottom:calc(var(--frame-w) + 14px + env(safe-area-inset-bottom, 0px));
+    right:calc(var(--frame-w) + 14px + env(safe-area-inset-right, 0px));
+  }
+
+  /* ---------- n. the narrowest phones (320px, iPhone SE 1st gen) ---------- */
+  @media (max-width:380px){
+    /* .names is left alone on purpose — its own clamp already bottoms out
+       at 2.5rem, and an override here made the script face BIGGER, not
+       smaller, because 13vw beats that floor on a 375px screen. */
+    .d-num{ font-size:clamp(2.9rem, 15vw, 3.6rem); }
+    .venue-card{ padding:2rem 1.1rem; }
+    .rsvp-plate{ padding:1.4rem 0.95rem 1.6rem; }
+    .event-body{ padding:1rem 0.9rem; }
+    .cd-title{ font-size:0.86rem; letter-spacing:0.18em; text-indent:0.18em; }
+    .section-title{ font-size:clamp(1.55rem, 7.4vw, 1.9rem); }
+    .closing-quote{ max-width:26ch; }
+  }
+
+  /* ---------- o. phones held sideways ---------- */
+  @media (max-height:520px) and (orientation:landscape){
+    #hero{ min-height:0; padding-top:1.5rem; padding-bottom:2.5rem; }
+    .prabha{ padding-top:min(48px, 6%); }
+    .cd-heading{ margin-top:1.2rem; }
+    section{ padding-top:5vh; padding-bottom:5vh; }
+  }
 </style>
 </head>
 <body>
@@ -2015,7 +2265,7 @@ a{ color:inherit; }
   </div>
     <img src="assets/cd-bottom-flourish.png"
      class="cd-bottom-flourish"
-     alt="">
+     alt="" width="656" height="96" loading="lazy" decoding="async">
   </div>
 </section>
 
@@ -2025,6 +2275,7 @@ a{ color:inherit; }
      class="diya"
      alt=""
      aria-hidden="true"
+     onerror="this.style.display='none'"
      data-reveal="scale">
   <h2 class="section-title" data-reveal data-stagger="1">With the Blessings of Our Beloved Parents</h2>
   <div class="flourish" data-reveal data-stagger="2">
@@ -2050,11 +2301,11 @@ a{ color:inherit; }
   <div class="venue-card" data-reveal data-stagger="1">
 
     <div class="venue-bg-left" aria-hidden="true">
-        <img src="assets/temple_right.png" alt="">
+        <img src="assets/temple_right.png" alt="" width="610" height="791" loading="lazy" decoding="async">
     </div>
 
     <div class="venue-bg-right" aria-hidden="true">
-        <img src="assets/temple_left.png" alt="">
+        <img src="assets/temple_left.png" alt="" width="617" height="811" loading="lazy" decoding="async">
     </div>
 
     <div class="venue-card-label">Our Wedding Venue</div>
@@ -2132,7 +2383,7 @@ a{ color:inherit; }
   <div class="closing-flourish" aria-hidden="true">
     <img src="assets/closing-flourish.png"
          alt=""
-         class="closing-flourish-img">
+         class="closing-flourish-img" width="645" height="45" loading="lazy" decoding="async">
 </div>
   <div class="bell-corner bell-r" aria-hidden="true">
     <img
@@ -2145,13 +2396,13 @@ a{ color:inherit; }
 
 <footer>
   <div class="footer-crest">
-    <div class="peacock-wrap" data-reveal="left"><img class="peacock pk-l" src="assets/peacock.png" alt="Peacock with mandala"></div>
+    <div class="peacock-wrap" data-reveal="left"><img class="peacock pk-l" src="assets/peacock.png" alt="Peacock with mandala" width="1184" height="1328" loading="lazy" decoding="async"></div>
     <div data-reveal="scale" data-stagger="1">
       <span class="script" id="footer-names">Chaitanya &amp; Sandhya</span>
       <p>With love &amp; blessings — together with our families</p>
       <p id="footer-date" style="margin-top:0.5rem;">NOVEMBER 21 · 2026</p>
     </div>
-    <div class="peacock-wrap flip" data-reveal="right"><img class="peacock pk-r" src="assets/peacock.png" alt="Peacock with mandala"></div>
+    <div class="peacock-wrap flip" data-reveal="right"><img class="peacock pk-r" src="assets/peacock.png" alt="Peacock with mandala" width="1184" height="1328" loading="lazy" decoding="async"></div>
   </div>
 </footer>
 
@@ -2332,7 +2583,7 @@ CONFIG.events.forEach(ev => {
       <a class="btn" href="${mapUrl}" target="_blank" rel="noopener">See on Maps</a>
     </div>
     ${ev.imageSrc
-      ? `<div class="event-media"><img src="${ev.imageSrc}" alt="${ev.title}" loading="lazy"></div>`
+      ? `<div class="event-media"><img src="${ev.imageSrc}" alt="${ev.title}" loading="lazy" decoding="async"></div>`
       : ev.videoSrc
         ? `<div class="event-media"><video src="${ev.videoSrc}" controls></video></div>`
         : `<div class="media-placeholder">
