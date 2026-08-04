@@ -558,7 +558,7 @@ a{ color:inherit; }
   }
   .blessing-line .bl-mean{
     margin-top:0.3rem;
-    font-family:'Jost', sans-serif; font-weight:400;
+    font-family:'Jost', sans-serif; font-weight:500;
     font-size:clamp(0.52rem, 1.5vw, 0.66rem);
     letter-spacing:0.2em; text-transform:uppercase; text-indent:0.2em;
     color:var(--gold-soft);
@@ -832,7 +832,6 @@ a{ color:inherit; }
     gap:1.6rem; margin-top:1.6rem; text-align:center;
   }
   .parents-lotus{ width:clamp(64px, 10vw, 90px); height:auto; flex:0 0 auto; display:block; }
-  .parents-lotus-r{ transform:scaleX(-1); }
   .parents-divider{
     width:1px; align-self:stretch; min-height:52px;
     background:linear-gradient(180deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
@@ -1203,18 +1202,123 @@ a{ color:inherit; }
   /* one hairline reads as a browser default. Three concentric rules at
      different weights read as a plate struck into paper. */
   .page-frame{
-    inset:9px;
-    border:1.5px solid rgba(192,138,44,0.62);
-    border-radius:5px;
-    box-shadow:0 0 22px rgba(192,138,44,0.10);
-  }
+    position: fixed;
+    inset: 8px;
+    z-index: 40;
+    pointer-events: none;
+
+    border-radius: 6px;
+
+    border:3.5px solid #c78708e9;
+
+    box-shadow:
+        inset 0 0 1px rgba(248,233,179,.7),
+        0 0 8px rgba(200,155,46,.15);
+}
+  
+  /* Champagne highlight */
   .page-frame::before{
-    content:""; display:block; position:absolute; inset:4px;
-    border:1px solid rgba(192,138,44,0.32); border-radius:3px;
+      content: "";
+      position: absolute;
+      inset: 4px;
+
+      border:1px solid #EEDFAF;
+      border-radius: 1px;
   }
+
+  /* Antique gold inner line */
   .page-frame::after{
-    content:""; display:block; position:absolute; inset:9px;
-    border:1px solid rgba(140,26,46,0.11); border-radius:2px;
+      content: "";
+      position: absolute;
+      inset: 9px;
+
+      border:1px solid rgba(138,90,20,.45);
+      border-radius: 2px;
+  }
+
+    /* Background Temple Layer */
+  .bg-temples{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      pointer-events:none;
+      overflow:hidden;
+  }
+
+  /* Shared styling */
+  .bg-temples .temple{
+      position:absolute;
+      bottom:12px;
+      
+      height:78vh;
+      max-height:900px;
+
+      opacity: 0.15;
+
+      filter:
+          sepia(.35)
+          saturate(.85)
+          brightness(1.05);
+
+      user-select:none;
+  }
+
+  .bg-temples .temple{
+    mask-image:linear-gradient(
+        to right,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent
+    );
+
+    -webkit-mask-image:linear-gradient(
+        to right,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent
+    );
+   }
+
+   .temple-right{
+    right: -8px;
+    transform:scaleX(-1);
+
+    mask-image:linear-gradient(
+        to left,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent
+    );
+
+    -webkit-mask-image:linear-gradient(
+        to left,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent
+    );
+  }  
+
+  .bg-kolam{
+    position:absolute;
+
+    left:50%;
+    top:65%;
+
+    transform:translate(-50%,-50%);
+
+    width:min(550px,72vw);
+
+    opacity:0.15;
+
+    filter:
+        sepia(0.3)
+        saturate(0.7);
+
+    z-index:-2;
   }
 
   /* ---------- 3. typography roles ---------- */
@@ -1350,7 +1454,15 @@ a{ color:inherit; }
     padding:clamp(1.5rem, 3.6vw, 2.4rem) clamp(1.1rem, 3.6vw, 2.2rem);
     border-radius:12px; margin-top:1.9rem;
   }
-  .parent-card .role{ letter-spacing:0.26em; text-indent:0.26em; }
+  .parent-card .role{
+  font-size:0.8rem;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:var(--gold-soft);
+  margin-bottom:0.6rem;
+  font-weight:700;
+  }
+  /* { letter-spacing:0.26em; text-indent:0.26em; font-weight:700;} */
   .parent-card .names{ font-size:1.28rem; }
 
   /* the venue card echoes the arch — this is a kalyana mandapam, after all */
@@ -1639,26 +1751,20 @@ a{ color:inherit; }
      between the corner ornaments closes the border on all four sides, the
      way a printed card is bordered rather than just cornered. Hidden below
      1120px, where the margin isn't there to fill. */
-  .page-corners::before, .page-corners::after{
-    content:""; display:none; position:absolute;
-    top:calc(clamp(72px, 15vw, 120px) + 10px);
-    bottom:calc(clamp(72px, 15vw, 120px) + 10px);
-    width:16px;
-    background-image:
-      radial-gradient(circle, var(--gold) 1.6px, transparent 1.9px),
-      linear-gradient(180deg, transparent,
-        rgba(192,138,44,0.45) 10%, rgba(192,138,44,0.45) 90%, transparent);
-    background-size:16px 21px, 1px 100%;
-    background-position:center top, center;
-    background-repeat:repeat-y, no-repeat;
-    opacity:0.6;
-  }
-  .page-corners::before{ left:24px; }
-  .page-corners::after { right:24px; }
-  @media (min-width:1120px){
-    .page-corners::before, .page-corners::after{ display:block; }
-  }
+  
+  .bottom-middle-art{
+    display: flex;
+    justify-content: center;  /* Space below the peacocks */
+    margin-bottom: -50px;  /* Slight overlap with the page border if desired */
+    pointer-events: none;
+}
 
+  .bottom-middle-art img{
+      width: clamp(500px, 70vw, 750px);
+      max-width: 80%;
+      height: auto;
+      display: block;
+  }
   /* ---------- 19. after removing the pattern ----------
      With the lattice gone the maroon panels rely on gradient alone, so the
      type on them needs a touch more presence, and the arch — now a genuine
@@ -1685,7 +1791,7 @@ a{ color:inherit; }
     flex-direction:column;
     align-items:center;
     line-height:1;
-    font-size:clamp(2.5rem, 8vw, 4.8rem); /* Reduced from 2.8, 9vw, 5.3 */
+    font-size:clamp(2.5rem, 8vw, 4.5rem); /* Reduced from 2.8, 9vw, 5.3 */
     margin:0.15rem 0 0;
     padding:0.16em 0 0.12em; /* Slightly tighter */
 }
@@ -1732,19 +1838,27 @@ a{ color:inherit; }
   }
 
   /* ------------22. Page Border ------------- */
-   .edge-left{
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 200px;
-    height: 150vh;
+    .edge-left,
+    .edge-right{
+        position: fixed;
+        top: 140px;
+        bottom: 50px;
 
-    background: url("assets/Edge Line Left.png") repeat-y left top;
-    background-size: 170px auto;
+        width: 30px;      /* Try 16px, 18px, 20px, 24px */
+        height: auto;
 
-    pointer-events: none;
-    z-index: 1;
-}
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .edge-left{
+        left: 9px;
+    }
+
+    .edge-right{
+    right: 9px;
+    transform: scaleX(-1);
+    }
 
   /* ======================================================================
      23. DEVICE LAYER — phones (Android + iPhone), tablets, desktop
@@ -1999,32 +2113,48 @@ a{ color:inherit; }
 </head>
 <body>
 
-  <!-- Left Decorative Border -->
-<!-- <img src="assets/Edge Line Left.png"
-     alt="Left Floral Border"
-     class="edge-left"> -->
-
 <div class="page-frame"></div>
 
 <div class="page-corners">
   <div class="cnr tl">
-    <img src="assets/corner-art-1.png" class="corner-img" alt="">
+    <img src="assets/corner-art-top.png" class="corner-img" alt="">
   </div>
 
   <div class="cnr tr">
-    <img src="assets/corner-art-1.png" class="corner-img" alt="">
+    <img src="assets/corner-art-top.png" class="corner-img" alt="">
   </div>
 
   <div class="cnr bl">
-    <img src="assets/corner-art-1.png" class="corner-img" alt="">
+    <img src="assets/corner-art-bottom.png" class="corner-img" alt="">
   </div>
 
   <div class="cnr br">
-    <img src="assets/corner-art-1.png" class="corner-img" alt="">
+    <img src="assets/corner-art-bottom.png" class="corner-img" alt="">
   </div>
+
 </div>
 
+<img src="assets/side-hanging-art.png"
+     class="edge-left"
+     alt="">
 
+<img src="assets/side-hanging-art.png"
+     class="edge-right"
+     alt="">
+
+<div class="bg-temples">
+    <img src="assets/temple_scene_left.png"
+          class="temple temple-left"
+          alt="">
+    
+    <img src="assets/kolam.png"
+         class="bg-kolam"
+         alt="">
+
+    <img src="assets/temple_scene_left.png"
+          class="temple temple-right"
+          alt="">
+</div>
 
 <!--
   VIDEO / AUDIO PLACEHOLDERS
@@ -2404,6 +2534,9 @@ a{ color:inherit; }
     </div>
     <div class="peacock-wrap flip" data-reveal="right"><img class="peacock pk-r" src="assets/peacock.png" alt="Peacock with mandala" width="1184" height="1328" loading="lazy" decoding="async"></div>
   </div>
+  <div class="bottom-middle-art">
+    <img src="assets/middle-clip-art.png" alt="">
+  </div>
 </footer>
 
 <script>
@@ -2420,7 +2553,8 @@ a{ color:inherit; }
    you never need to read it; edit CONFIG below instead.
    ===================================================================== */
 const PHOTOS = {
-  lotus: "assets/lotus_left.png",
+  lotusLeft: "assets/lotus_left.png",
+  lotusRight: "assets/lotus_right.png",
   lamp: "assets/lamp.png",
   kalash: "assets/kalash.png",
   marriage: "assets/marriage.png",
@@ -2495,11 +2629,12 @@ const CONFIG = {
 
 /* ---- Apply top-level config ---- */
 document.title = `${CONFIG.partner1} & ${CONFIG.partner2} — We're Getting Married`;
-document.getElementById('name1').textContent = CONFIG.partner1;
-document.getElementById('name2').textContent = CONFIG.partner2;
+document.getElementById('name1').textContent = "Krishna Chaitanya";
+document.getElementById('name2').textContent = "Sandhya Gayatri";
 document.querySelectorAll('.kalash').forEach(k => { k.src = PHOTOS.kalash; });
 document.querySelectorAll('.lamp').forEach(l => { l.src = PHOTOS.lamp; });
-document.querySelectorAll('.parents-lotus').forEach(l => { l.src = PHOTOS.lotus; });
+document.querySelector('.parents-lotus-l').src = PHOTOS.lotusLeft;
+document.querySelector('.parents-lotus-r').src = PHOTOS.lotusRight;
 
 // invocation is three parts spread left / centre / right — split on the words,
 // falling back to the raw string if it isn't the usual three-part blessing
