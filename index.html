@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1024, initial-scale=1.0" maximum-scale=1.0, user-scalable="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chaitanya &amp; Sandhya — We're Getting Married</title>
 
 <!--
@@ -158,7 +158,7 @@
 
 .toran-row{
     position:relative;
-    top:-5px;
+    top:14px;
 
     display:flex;
     align-items:center;
@@ -177,7 +177,7 @@
   background-image: url("assets/toran_tile.png");
   background-repeat: repeat-x;
   background-position: left top;
-  background-size: auto 100%;
+  background-size: auto 65%;
 
   filter: drop-shadow(0 6px 11px rgba(107,17,34,0.16));
 }
@@ -195,13 +195,20 @@ a{ color:inherit; }
 :focus-visible{ outline:2px solid var(--maroon); outline-offset:3px; }
 
   /* ================= TEMPLE DOORWAY INTRO (DWARAM) =================
-     The invitation opens the way a South Indian home or temple welcomes
-     you: a carved doorway crowned by a stepped gopuram and a kalasam,
-     a mango-leaf thoranam strung across the lintel, brass bells either
-     side, kolam and lit diyas at the threshold — and two teak doors
-     that swing inward on a lamp-lit sanctum.
-     Everything here is inline SVG + CSS, so the intro needs no image
-     files of its own. */
+     A South Indian threshold, dressed the way it really would be: a
+     carved gold gopuram bearing "svaagatam", a marigold thoranam across
+     the lintel, two teak doors, a purna kalasam and a standing kuthu
+     vilakku either side, and a kolam lined with diyas on the floor.
+
+     LAYOUT. --dwaram-w is the width of the whole scene. Everything is a
+     percentage of it, so the composition holds at any size:
+       .dwaram-frame   84%  of the scene, centred
+       .kalash-side    16%  tucked against the pillar bases
+       .stand-lamp      12%  standing on the floor in front
+     The doorway opening inside frame.png was measured in pixels and is
+     written below as four percentages. Do not change those unless the
+     frame artwork itself is re-cut. */
+
   #envelope-screen{
     position:fixed; inset:0; z-index:100;
     background:
@@ -226,6 +233,55 @@ a{ color:inherit; }
     box-shadow:inset 0 0 260px 70px rgba(0,0,0,0.62);
   }
 
+  /* ---------- mandala watermarks pressed into the wall ---------- */
+  .mandala{
+    position: absolute;
+    top: 45%;
+    width: 28%;
+    height: auto;
+
+    opacity: 0.09;          /* Faded like the reference */
+    z-index: 0.01;             /* Behind the temple */
+    pointer-events: none;
+
+    filter:
+        sepia(1)
+        saturate(2)
+        hue-rotate(-10deg)
+        brightness(1.2);
+  }
+
+  .mn-l{
+      left: -15%;
+  }
+
+  .mn-r{
+      right: -15%;
+      transform: scaleX(-1);
+  }
+  /* .mn-l{ left:-15%; }
+  .mn-r{ right:-15%; } */
+
+  /* ---------- the gold border and its carved corners ---------- */
+  .env-border{
+    position:absolute; inset:clamp(8px, 2.2vmin, 24px);
+    z-index:1; pointer-events:none;
+    border:2px solid rgba(214,162,74,0.85);
+  }
+  .env-border::after{
+    content:""; position:absolute; inset:5px;
+    border:1px solid rgba(214,162,74,0.4);
+  }
+  .env-corner{
+    position:absolute;
+    width:clamp(38px, 7.5vw, 104px); height:auto;
+    filter:drop-shadow(0 3px 8px rgba(0,0,0,0.35));
+  }
+  .ec-tl{ top:-2px; left:-2px; }
+  .ec-tr{ top:-2px; right:-2px; transform:scaleX(-1); }
+  .ec-bl{ bottom:-2px; left:-2px; transform:scaleY(-1); }
+  .ec-br{ bottom:-2px; right:-2px; transform:scale(-1,-1); }
+
   .env-stage{
     position:relative; z-index:2;
     display:flex; flex-direction:column; align-items:center;
@@ -234,92 +290,87 @@ a{ color:inherit; }
   }
   @keyframes stageIn{ from{ opacity:0; transform:translateY(20px) scale(0.97); } to{ opacity:1; transform:none; } }
 
-  /* ---------- the doorway as a whole ---------- */
+  /* ---------- the scene as a whole ---------- */
   .dwaram{
     position:relative;
-    width:min(92vw, 600px, 42svh);
+    --dwaram-w:min(96vw, 680px, 56svh);
+    width:var(--dwaram-w);
     display:flex; flex-direction:column; align-items:center;
     cursor:pointer;
     transition:transform 0.45s ease;
-    filter:drop-shadow(0 26px 48px rgba(0,0,0,0.55));
   }
   .dwaram:hover{ transform:translateY(-4px); }
   /* once the doors are open the view walks through them */
   .dwaram.lift{ animation:enterDoor 1.3s cubic-bezier(.5,0,.25,1) forwards; }
   @keyframes enterDoor{ to{ transform:scale(2.15); opacity:0; } }
 
-  /* ---------- gopuram crown + kalasam ---------- */
-  .gopuram{
-    position:relative; z-index:3;
-    width:100%; display:flex; flex-direction:column; align-items:center;
+  /* ---------- the portico: arch, pots and standing lamps ---------- */
+  .portico{ position:relative; width:100%; }
+
+  .kalash-side{
+    position:absolute; bottom:-2%; z-index:5;
+    width:30%; height:auto;
+    filter:drop-shadow(0 10px 18px rgba(0,0,0,0.5));
   }
-  .kalasam{
-    width:21%; height:auto; margin-bottom:-2px;
-    filter:drop-shadow(0 6px 10px rgba(0,0,0,0.45));
+  .ks-l{ left:2%; }
+  .ks-r{ right:2%; transform:scaleX(-1); }
+
+  .stand-lamp{
+    position:absolute; bottom:-5%; z-index:7;
+    width:12%; height:auto;
+    animation:lampGlow 2.6s ease-in-out infinite;
   }
-  .tier{
-    height:clamp(6px, 1.7vw, 9px); border-radius:2px 2px 0 0;
-    background:linear-gradient(180deg,#f2dc9c,#c9902f 55%,#8a651f);
-    box-shadow:0 1px 0 rgba(74,14,28,0.5);
-  }
-  .tier.t1{ width:38%; }
-  .tier.t2{ width:70%; margin-top:1px; }
-  .lintel{
-    width:112%; max-width:calc(100vw - 14px); margin-top:1px;
-    padding:clamp(3px,1vw,6px) 0 clamp(4px,1.2vw,7px);
-    text-align:center; border-radius:3px 3px 0 0;
-    background:linear-gradient(180deg,#f6e6b4,#d9ae55 60%,#a87d29);
-    box-shadow:0 3px 10px rgba(0,0,0,0.35);
-  }
-  .lintel span{
-    font-family:'Cormorant Garamond', serif; font-weight:600;
-    font-size:clamp(0.8rem, 3.2vw, 1.1rem);
-    letter-spacing:0.18em; text-indent:0.18em;
-    color:#5c1522;
+  .sl-l{ left:19%; }
+  .sl-r{ right:19%; animation-delay:-1.3s; }
+  @keyframes lampGlow{
+    0%,100%{ filter:drop-shadow(0 0 8px  rgba(255,196,90,0.55)) brightness(1);    }
+    50%    { filter:drop-shadow(0 0 17px rgba(255,214,130,0.9)) brightness(1.07); }
   }
 
-  /* ---------- the carved door frame ---------- */
+  /* ---------- the gold arch ---------- */
   .dwaram-frame{
-    position:relative;
-    width:100%;
-    aspect-ratio:1 / 1.24;
-    padding:clamp(8px, 2.4vw, 13px);
-    border-radius:0 0 4px 4px;
-    background:
-      linear-gradient(180deg,#8a651f 0%,#c9902f 14%,#f2dc9c 30%,#c9902f 48%,#9a6f22 70%,#e0bd6a 88%,#a87d29 100%);
-    box-shadow:
-      inset 0 0 0 1px rgba(255,244,208,0.55),
-      inset 0 0 0 6px rgba(122,88,26,0.28),
-      0 18px 38px rgba(0,0,0,0.5);
+    position:relative; width:84%; margin:0 auto;
+    aspect-ratio:1170 / 1521;
+    filter:drop-shadow(0 22px 40px rgba(0,0,0,0.55));
   }
-  /* carved bead run along the inside of the frame */
-  .dwaram-frame::after{
-    content:""; position:absolute; inset:clamp(4px,1.2vw,7px);
-    border-radius:2px; pointer-events:none;
-    border:1px dashed rgba(92,21,34,0.35);
+  .frame-art{
+    position:absolute; inset:0; z-index:4;
+    width:100%; height:100%; object-fit:fill;
+    pointer-events:none;
   }
 
-  /* ---------- the opening ---------- */
+  /* ---------- the opening, measured out of frame.png ---------- */
   .doorway{
-    position:relative; width:100%; height:100%;
-    border-radius:2px; overflow:hidden;
-    perspective:1000px; perspective-origin:50% 45%;
+    position:absolute;
+    left:15.13%; right:15.39%; top:36.29%; bottom:3.75%;
+    z-index:2; overflow:hidden;
+    perspective:1100px; perspective-origin:50% 45%;
     background:radial-gradient(ellipse 62% 52% at 50% 58%, #ffd98d 0%, #e0912c 32%, #8d2f1c 62%, #35101a 100%);
     box-shadow:inset 0 0 26px rgba(0,0,0,0.75);
   }
-  /* the lamp-lit sanctum waiting behind the doors */
+  /* the sanctum beyond the doors: light only, no lamp */
   .sanctum{
-    position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center;
+    position:absolute; inset:0; overflow:hidden;
     transition:transform 1.6s ease, filter 1.6s ease;
   }
   .sanctum::before{
     content:""; position:absolute; inset:-20%;
-    background:repeating-conic-gradient(from 0deg at 50% 62%,
-      rgba(255,232,170,0.14) 0deg 3deg, transparent 3deg 9deg);
+    background:repeating-conic-gradient(from 0deg at 50% 58%,
+      rgba(255,232,170,0.16) 0deg 3deg, transparent 3deg 9deg);
     animation:rays 120s linear infinite reverse;
   }
-  .vilakku{ position:relative; width:42%; height:auto; margin-bottom:5%; opacity:0.96; }
-  .dwaram.open .sanctum{ transform:scale(1.12); filter:brightness(1.18); }
+  .sanctum::after{
+    content:""; position:absolute; left:50%; top:58%;
+    width:120%; aspect-ratio:1; border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(255,244,206,0.95) 0%, rgba(255,206,116,0.55) 30%, rgba(255,170,60,0.18) 52%, transparent 72%);
+    animation:sanctumBreathe 4.5s ease-in-out infinite;
+  }
+  @keyframes sanctumBreathe{
+    0%,100%{ opacity:0.72; transform:translate(-50%,-50%) scale(1);    }
+    50%    { opacity:0.95; transform:translate(-50%,-50%) scale(1.06); }
+  }
+  .dwaram.open .sanctum{ transform:scale(1.12); filter:brightness(1.2); }
   /* the light that spills out once the doors part */
   .doorway::after{
     content:""; position:absolute; left:50%; top:56%; z-index:8;
@@ -330,18 +381,15 @@ a{ color:inherit; }
   }
   .dwaram.open .doorway::after{ transform:translate(-50%,-50%) scale(1); opacity:0.75; }
 
-  /* ---------- the two teak doors ---------- */
+  /* ---------- the two teak leaves ---------- */
   .door{
-    position:absolute; top:0; bottom:0; width:50.3%;
-    transform-style:preserve-3d;
+    position:absolute; top:0; bottom:0; width:50.4%;
+    transform-style:preserve-3d; backface-visibility:hidden;
     transition:transform 1.5s cubic-bezier(.62,.02,.24,1);
-    background:
-      repeating-linear-gradient(93deg, rgba(0,0,0,0.16) 0 1.5px, rgba(255,255,255,0.03) 1.5px 3px, transparent 3px 11px),
-      linear-gradient(96deg,#68301c,#7d4127 34%,#5b2917 68%,#421a10);
-    box-shadow:inset 0 0 0 1px rgba(214,162,74,0.55), inset 0 0 22px rgba(0,0,0,0.45);
   }
-  .door-l{ left:0;  transform-origin:left center;  border-radius:2px 0 0 2px; }
-  .door-r{ right:0; transform-origin:right center; border-radius:0 2px 2px 0; }
+  .door img{ width:100%; height:100%; object-fit:fill; display:block; }
+  .door-l{ left:0;  transform-origin:left center;  }
+  .door-r{ right:0; transform-origin:right center; }
   .dwaram.open .door-l{ transform:rotateY(76deg); }
   .dwaram.open .door-r{ transform:rotateY(-76deg); }
   /* the light that falls off each leaf as it swings inward */
@@ -349,91 +397,79 @@ a{ color:inherit; }
     content:""; position:absolute; inset:0; pointer-events:none;
     transition:opacity 1.5s ease;
   }
-  .door-l::after{ background:linear-gradient(90deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55)); opacity:0.3; }
-  .door-r::after{ background:linear-gradient(270deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55)); opacity:0.3; }
+  .door-l::after{ background:linear-gradient(90deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55)); opacity:0.28; }
+  .door-r::after{ background:linear-gradient(270deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55)); opacity:0.28; }
   .dwaram.open .door::after{ opacity:0.88; }
-  /* brass stud run down the hinge side of each leaf */
-  .door::before{
-    content:""; position:absolute; top:6%; bottom:6%; width:9px;
-    background-image:radial-gradient(circle at 50% 50%,
-      #f5dc9a 0 2.1px, #a97f2c 2.2px 3.1px, transparent 3.3px);
-    background-size:9px 20px; background-repeat:repeat-y;
-    opacity:0.9;
-  }
-  .door-l::before{ left:4%; }
-  .door-r::before{ right:4%; }
 
-  .door-face{
-    position:absolute; inset:11% 16%;
-    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-  }
-  .panel{
-    position:relative; width:100%; flex:1 1 0; margin:4% 0;
-    border:1px solid rgba(214,162,74,0.5);
-    border-radius:2px;
-    background:linear-gradient(160deg, rgba(255,220,150,0.07), rgba(0,0,0,0.22));
-    box-shadow:inset 0 1px 0 rgba(255,220,150,0.15), inset 0 -1px 0 rgba(0,0,0,0.35);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .panel svg{ width:64%; height:auto; opacity:0.92; }
-
-  /* brass ring handles where the leaves meet */
-  .handle{
-    position:absolute; top:53%; z-index:2;
-    width:clamp(15px, 4.2vw, 21px); aspect-ratio:1; border-radius:50%;
-    border:3px solid #d9ab4d;
-    box-shadow:0 2px 5px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,242,196,0.6);
-  }
-  .door-l .handle{ right:9%; }
-  .door-r .handle{ left:9%; }
-  .handle::before{
-    content:""; position:absolute; left:50%; bottom:100%; transform:translateX(-50%);
-    width:42%; height:6px; border-radius:1px;
-    background:linear-gradient(180deg,#f0d288,#a97f2c);
-  }
-
-  /* ---------- thoranam + bells hanging in front of the doors ---------- */
+  /* ---------- thoranam hanging across the lintel ---------- */
   .toranam{
-    position:absolute; top:-1%; left:0; width:100%; height:auto; z-index:6;
+    position:absolute; top:35%; left:8%; width:84%; height:auto; z-index:6;
     transform-origin:50% 0;
     pointer-events:none;
-    filter:drop-shadow(0 5px 8px rgba(0,0,0,0.5));
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,0.5));
   }
-  /* the garland (and its bells) sway as the doors are pushed open */
+  /* the garland and its bells sway as the doors are pushed open */
   .dwaram.open .toranam{ animation:garlandSway 1.6s ease-in-out 2; }
   @keyframes garlandSway{
     0%,100%{ transform:rotate(0deg) translateY(0); }
     30%    { transform:rotate(0.7deg) translateY(1.5%); }
     70%    { transform:rotate(-0.7deg) translateY(0.8%); }
   }
-  /* ---------- threshold: step, kolam, diyas ---------- */
+
+  /* ---------- the floor: kolam and its row of diyas ---------- */
   .threshold{
-    position:relative; width:112%; max-width:calc(100vw - 14px); aspect-ratio:3.15;
-    display:flex; align-items:flex-start; justify-content:center;
-  }
-  .step{
-    position:absolute; top:0; left:10%; right:10%;
-    height:clamp(8px, 2.2vw, 12px); border-radius:0 0 3px 3px;
-    background:linear-gradient(180deg,#e8c884,#a97f2c);
-    box-shadow:0 8px 16px rgba(0,0,0,0.45);
+    position:relative; width:100%; aspect-ratio:3.9;
+    margin-top:2%;
   }
   .kolam{
-    position:absolute; top:clamp(5px, 1.6vw, 9px);
-    width:64%; height:auto; opacity:0.92;
-    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.35));
+    position:absolute; left:50%; top:10%;
+    transform:translateX(-50%);
+    width:44%; height:auto; opacity:0.95;
+    filter:sepia(0.6) saturate(2.2) hue-rotate(-12deg) brightness(1.25)
+           drop-shadow(0 2px 8px rgba(0,0,0,0.35));
   }
   .diya{
-    position:absolute; top:clamp(6px, 1.8vw, 10px);
-    width:clamp(30px, 8vw, 42px); height:auto;
+    position:absolute; height:auto;
+    animation:diyaGlow 2.2s ease-in-out infinite;
   }
-  .diya-l{ left:0; }
-  .diya-r{ right:0; }
-  .flame{ transform-origin:50% 100%; animation:flick 1.7s ease-in-out infinite; }
-  .diya-r .flame{ animation-delay:-0.8s; }
-  @keyframes flick{
-    0%,100%{ transform:scale(1) rotate(0deg); opacity:0.95; }
-    30%    { transform:scale(1.07,0.94) rotate(-3deg); opacity:1; }
-    65%    { transform:scale(0.94,1.08) rotate(3deg); opacity:0.88; }
+  @keyframes diyaGlow{
+    0%,100%{ filter:drop-shadow(0 0 7px  rgba(255,190,90,0.55)) brightness(1);    }
+    50%    { filter:drop-shadow(0 0 15px rgba(255,208,120,0.9)) brightness(1.06); }
+  }
+  /* .dy-1{ left:5%;    top:16%; width:7.4%; animation-delay:-0.2s; }
+  .dy-2{ left:17.5%; top:38%; width:8.2%; animation-delay:-0.9s; }
+  .dy-3{ left:31%;   top:58%; width:8.8%; animation-delay:-1.5s; }
+  .dy-4{ left:45.4%; top:68%; width:9.2%; animation-delay:-0.6s; }
+  .dy-5{ right:31%;  top:58%; width:8.8%; animation-delay:-1.9s; }
+  .dy-6{ right:17.5%;top:38%; width:8.2%; animation-delay:-1.2s; }
+  .dy-7{ right:5%;   top:16%; width:7.4%; animation-delay:-0.4s; } */
+
+  /* Left diya beside left kalash */
+.diya-left{
+    position:absolute;
+    left:10%;
+    bottom:75%;
+    width:8%;
+    z-index:8;
+  }
+
+  /* Right diya beside right kalash */
+  .diya-right{
+      position:absolute;
+      right:10%;
+      bottom:75%;
+      width:8%;
+      z-index:8;
+  }
+
+  /* Center diya on the kolam */
+  .diya-center{
+      position:absolute;
+      left:50%;
+      top:35%;
+      transform:translate(-50%, -50%);
+      width:10%;
+      z-index:9;
   }
 
   /* ---------- the nameplate under the doorway ---------- */
@@ -459,7 +495,7 @@ a{ color:inherit; }
   @keyframes foilSweep{ 0%,100%{ background-position:0% 0; } 50%{ background-position:100% 0; } }
   .env-names{
     font-family:'Great Vibes', cursive;
-    font-size:clamp(1.55rem, 6.2vw, 2.3rem); line-height:1.1;
+    font-size:clamp(1.45rem, 5.8vw, 2.2rem); line-height:1.15;
     color:#f3dda4; margin:0.05rem 0;
     text-shadow:0 2px 14px rgba(240,160,42,0.45);
   }
@@ -469,7 +505,7 @@ a{ color:inherit; }
   }
 
   #envelope-hint{
-    margin-top:1rem;
+    margin-top:0.8rem;
     color:var(--marigold); font-size:0.72rem; letter-spacing:0.24em; text-indent:0.24em;
     text-transform:uppercase;
     animation:pulse 2.2s ease-in-out infinite;
@@ -478,27 +514,28 @@ a{ color:inherit; }
   #envelope-screen.opening #envelope-hint{ opacity:0; }
   @keyframes pulse{ 0%,100%{opacity:0.4;} 50%{opacity:1;} }
 
-  /* short screens: trim the ornament, keep the doors */
-  /* the doorway is sized from viewport width AND height at once, so it fills
-     as much of the screen as it can without ever being clipped. One number to
-     change if you want it larger or smaller: the svh figure. */
-  @media (max-height:800px){ .dwaram{ width:min(92vw, 600px, 39svh); } }
-  @media (max-height:660px){
-    .dwaram{ width:min(92vw, 600px, 39svh); }
+  /* ---------- fitting the scene to the screen ----------
+     Each rule changes only --dwaram-w; the composition scales with it. */
+  @media (max-height:820px){ .dwaram{ --dwaram-w:min(96vw, 680px, 53svh); } }
+  @media (max-height:700px){
+    .dwaram{ --dwaram-w:min(96vw, 680px, 50svh); }
     .env-plate .env-kicker, .env-plate .env-rule{ display:none; }
-    #envelope-hint{ margin-top:0.6rem; }
+    #envelope-hint{ margin-top:0.55rem; }
+    .mandala{ opacity:0.65; }
   }
-  /* landscape phones: keep the doors, drop the ornament around them */
+  /* landscape phones: keep the doorway, drop the floor and the ornament */
   @media (max-height:520px){
-    .dwaram{ width:min(92vw, 600px, 46svh); }
+    .dwaram{ --dwaram-w:min(62vw, 620px, 70svh); }
     .threshold{ display:none; }
-    .kalasam{ width:26px; }
-    .tier{ height:5px; }
-    .lintel{ padding:2px 0 3px; }
-    .lintel span{ font-size:0.72rem; }
+    .mandala{ display:none; }
+    .env-corner{ width:clamp(32px, 5vw, 70px); }
     .env-plate .env-title, .env-plate .env-rule, .env-plate .env-kicker{ display:none; }
-    .env-names{ font-size:clamp(1.1rem, 4vw, 1.5rem); }
-    #envelope-hint{ margin-top:0.4rem; }
+    .env-names{ font-size:clamp(1.05rem, 3.4vw, 1.4rem); }
+    #envelope-hint{ margin-top:0.35rem; font-size:0.62rem; }
+  }
+  /* very narrow handsets */
+  @media (max-width:360px){
+    #envelope-hint{ font-size:0.64rem; letter-spacing:0.18em; text-indent:0.18em; }
   }
 
 
@@ -1310,7 +1347,7 @@ a{ color:inherit; }
 
     transform:translate(-50%,-50%);
 
-    width:min(550px,72vw);
+    width:min(450px,72vw);
 
     opacity:0.15;
 
@@ -1632,12 +1669,13 @@ a{ color:inherit; }
     background-size:cover;
     background-repeat:no-repeat;
   }
-  /* light travelling across the brass, the way metal catches a tilt */
+  /* light travelling across the brass of the arch, the way metal
+     catches a tilt. It rides on top of frame.png now. */
   .dwaram-frame::before{
-    content:""; position:absolute; inset:0; z-index:3;
-    border-radius:0 0 4px 4px; pointer-events:none; mix-blend-mode:screen;
-    background:linear-gradient(105deg, transparent 38%,
-                               rgba(255,247,220,0.40) 48%, transparent 58%);
+    content:""; position:absolute; inset:0; z-index:5;
+    pointer-events:none; mix-blend-mode:screen; opacity:0.55;
+    background:linear-gradient(105deg, transparent 40%,
+                               rgba(255,247,220,0.34) 48%, transparent 56%);
     background-size:260% 100%;
     animation:sheen 7s ease-in-out infinite;
   }
@@ -1755,7 +1793,7 @@ a{ color:inherit; }
   .bottom-middle-art{
     display: flex;
     justify-content: center;  /* Space below the peacocks */
-    margin-bottom: -50px;  /* Slight overlap with the page border if desired */
+    margin-bottom: -45px;  /* Slight overlap with the page border if desired */
     pointer-events: none;
 }
 
@@ -1834,7 +1872,7 @@ a{ color:inherit; }
     .event-card::before{ transform:scaleY(1) !important; }
     .event-card .event-mark{ transform:scale(1) !important; }
     .dwaram-frame::before, footer .script{ animation:none !important; }
-    .dwaram .flame, .dwaram .toranam{ animation:none !important; }
+    .dwaram .toranam, .dwaram .diya, .dwaram .stand-lamp, .sanctum::after{ animation:none !important; }
   }
 
   /* ------------22. Page Border ------------- */
@@ -2051,19 +2089,11 @@ a{ color:inherit; }
     min-height:calc(100vh - var(--header-h, 9rem));
     min-height:calc(100svh - var(--header-h, 9rem));
   }
-  .dwaram{
-    width:min(92vw, 600px, 42vh);
-    width:min(92vw, 600px, 42svh);
-  }
-  @media (max-height:800px){
-    .dwaram{ width:min(92vw, 600px, 39vh); width:min(92vw, 600px, 39svh); }
-  }
-  @media (max-height:660px){
-    .dwaram{ width:min(92vw, 600px, 39vh); width:min(92vw, 600px, 39svh); }
-  }
-  @media (max-height:520px){
-    .dwaram{ width:min(92vw, 600px, 46vh); width:min(92vw, 600px, 46svh); }
-  }
+  /* svh needs Android WebView 108+ / iOS 15.4+; the vh line is the
+     fallback for older handsets. Sizing now lives on --dwaram-w, set
+     in the intro block above — these only restate the fallback. */
+  .dwaram{ width:var(--dwaram-w, min(92vw, 520px, 40vh)); }
+  @supports (height:1svh){ .dwaram{ width:var(--dwaram-w); } }
 
   /* ---------- l. reserving space for artwork ---------- */
   /* Several images have their src set by JavaScript, and the ones below the
@@ -2078,6 +2108,15 @@ a{ color:inherit; }
   .peacock        { aspect-ratio:auto 1184/1328; }
   .parents-lotus  { aspect-ratio:auto 1550/1968; }
   .cd-ic img      { aspect-ratio:auto 147/138; }
+  .frame-art      { aspect-ratio:auto 1170/1521; }
+  .door img       { aspect-ratio:auto 592/1455; }
+  .toranam        { aspect-ratio:auto 1753/557; }
+  .kolam          { aspect-ratio:auto 561/233; }
+  .diya           { aspect-ratio:auto 947/799; }
+  .stand-lamp     { aspect-ratio:auto 139/291; }
+  .mandala        { aspect-ratio:auto 1/1; }
+  .kalash-side    { aspect-ratio:auto 716/1082; }
+  .env-corner     { aspect-ratio:auto 422/466; }
   .page-corners .cnr img{ aspect-ratio:auto 1/1; }
 
   /* ---------- m. notched phones ---------- */
@@ -2309,130 +2348,57 @@ a{ color:inherit; }
 
 <!-- ===================== TEMPLE DOORWAY INTRO ===================== -->
 <div id="envelope-screen">
+
+
+  <div class="env-border" aria-hidden="true">
+    <img class="env-corner ec-tl" src="assets/entrance/corner-art.png" alt="" onerror="this.style.display='none'">
+    <img class="env-corner ec-tr" src="assets/entrance/corner-art.png" alt="" onerror="this.style.display='none'">
+    <img class="env-corner ec-bl" src="assets/entrance/corner-art.png" alt="" onerror="this.style.display='none'">
+    <img class="env-corner ec-br" src="assets/entrance/corner-art.png" alt="" onerror="this.style.display='none'">
+  </div>
+
   <div class="env-stage">
     <div class="dwaram" id="envelope" role="button" tabindex="0" aria-label="Open the invitation">
-      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-        <defs>
-          <linearGradient id="brass" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#8a651f"/><stop offset="0.3" stop-color="#e6c477"/>
-            <stop offset="0.5" stop-color="#fbf0c8"/><stop offset="0.72" stop-color="#d3a244"/>
-            <stop offset="1" stop-color="#8a651f"/>
-          </linearGradient>
-          <linearGradient id="lf2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#4f8a4a"/><stop offset="1" stop-color="#255230"/>
-          </linearGradient>
-        </defs>
-      </svg>
 
-      <!-- gopuram crown with the kalasam above it -->
-      <div class="gopuram">
-        <img class="kalasam" src="assets/intro-kalasam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-        <div class="tier t1"></div>
-        <div class="tier t2"></div>
-        <div class="lintel"><span>&#3128;&#3149;&#3125;&#3134;&#3095;&#3108;&#3118;&#3149;</span></div>
-      </div>
+      <!-- the portico: the arch, with a kalasam and a standing lamp either side -->
+      <div class="portico">
+        <img class="mandala mn-l" src="assets/entrance/mandala.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="mandala mn-r" src="assets/entrance/mandala.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="kalash-side ks-l" src="assets/entrance/banyan-leaves.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="kalash-side ks-r" src="assets/entrance/banyan-leaves.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="stand-lamp sl-l" src="assets/entrance/lamp.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="stand-lamp sl-r" src="assets/entrance/lamp.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
 
-      <!-- the carved frame and its two doors -->
-      <div class="dwaram-frame">
-        <div class="doorway">
-          <div class="sanctum"><svg class="vilakku" viewBox="0 0 70 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g class="flame">
-            <ellipse cx="35" cy="16" rx="10" ry="18" fill="rgba(255,206,110,0.4)"/>
-            <path d="M35 0 C41 11 43.5 17 43.5 21.5 a8.5 8.5 0 0 1 -17 0 C26.5 17 29 11 35 0Z" fill="#ffcb52"/>
-            <path d="M35 10 C38 15.6 39 19 39 21.6 a4 4 0 0 1 -8 0 C31 19 32 15.6 35 10Z" fill="#fff6d0"/>
-          </g>
-          <g fill="#e0bd6a">
-            <path d="M20 34 h30 c-1.5 9 -6.5 13 -15 13 S21.5 43 20 34Z"/>
-            <rect x="31.5" y="46" width="7" height="58"/>
-            <ellipse cx="35" cy="62" rx="12" ry="4"/>
-            <ellipse cx="35" cy="82" rx="15" ry="4.5"/>
-            <path d="M12 104 h46 c-2 12 -10 18 -23 18 S14 116 12 104Z"/>
-            <ellipse cx="35" cy="128" rx="30" ry="7"/>
-            <ellipse cx="35" cy="136" rx="24" ry="6"/>
-          </g>
-        </svg></div>
-          <div class="door door-l">
-        <div class="door-face">
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-        </div>
-        <span class="handle"></span>
-      </div>
-          <div class="door door-r">
-        <div class="door-face">
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-          <div class="panel"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g fill="none" stroke="#d6a24a" stroke-width="1.1" stroke-linecap="round">
-                <g><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(0 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(45 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(90 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(135 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(180 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(225 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(270 20 20)"/><path d="M20 20 C16.2 12.5 17.6 6.6 20 3.4 C22.4 6.6 23.8 12.5 20 20Z" transform="rotate(315 20 20)"/></g>
-                <circle cx="20" cy="20" r="3.1" fill="rgba(214,162,74,0.35)" stroke="none"/>
-                <circle cx="20" cy="20" r="6.6"/>
-              </g>
-            </svg></div>
-        </div>
-        <span class="handle"></span>
-      </div>
-          <img class="toranam" src="assets/intro-thoranam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-          
-          
+        <div class="dwaram-frame">
+          <div class="doorway">
+            <div class="sanctum"></div>
+            <div class="door door-l">
+              <img src="assets/entrance/door-left.png" alt="" aria-hidden="true" onerror="this.closest('.door').style.background='linear-gradient(96deg,#68301c,#5b2917)'">
+            </div>
+            <div class="door door-r">
+              <img src="assets/entrance/door-right.png" alt="" aria-hidden="true" onerror="this.closest('.door').style.background='linear-gradient(96deg,#68301c,#5b2917)'">
+            </div>
+          </div>
+
+          <img class="frame-art" src="assets/entrance/frame.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+          <img class="toranam" src="assets/entrance/toranam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
         </div>
       </div>
 
-      <!-- threshold: step, kolam and two lit diyas -->
+      <!-- the floor: kolam lined with diyas -->
       <div class="threshold">
-        <div class="step"></div>
-        <img class="kolam" src="assets/intro-kolam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-        <svg class="diya diya-l" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g class="flame">
-          <ellipse cx="32" cy="12" rx="6" ry="11" fill="rgba(255,196,80,0.35)"/>
-          <path d="M32 1 C36.5 8 38 12.5 38 16 a6 6 0 0 1 -12 0 c0 -3.5 1.5 -8 6 -15Z" fill="#ffc447"/>
-          <path d="M32 8 C34.4 12 35 14.4 35 16.4 a3 3 0 0 1 -6 0 c0 -2 0.6 -4.4 3 -8.4Z" fill="#fff3c4"/>
-        </g>
-        <path d="M8 26 h48 c-2 10 -10 15 -24 15 S10 36 8 26Z" fill="url(#brass)"/>
-        <ellipse cx="32" cy="26" rx="24" ry="5" fill="#a97f2c"/>
-        <ellipse cx="32" cy="25.4" rx="19" ry="3.4" fill="#5b2917" opacity="0.55"/>
-      </svg>
-        <svg class="diya diya-r" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g class="flame">
-          <ellipse cx="32" cy="12" rx="6" ry="11" fill="rgba(255,196,80,0.35)"/>
-          <path d="M32 1 C36.5 8 38 12.5 38 16 a6 6 0 0 1 -12 0 c0 -3.5 1.5 -8 6 -15Z" fill="#ffc447"/>
-          <path d="M32 8 C34.4 12 35 14.4 35 16.4 a3 3 0 0 1 -6 0 c0 -2 0.6 -4.4 3 -8.4Z" fill="#fff3c4"/>
-        </g>
-        <path d="M8 26 h48 c-2 10 -10 15 -24 15 S10 36 8 26Z" fill="url(#brass)"/>
-        <ellipse cx="32" cy="26" rx="24" ry="5" fill="#a97f2c"/>
-        <ellipse cx="32" cy="25.4" rx="19" ry="3.4" fill="#5b2917" opacity="0.55"/>
-      </svg>
+        <img class="kolam" src="assets/entrance/kolam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya diya-left" src="assets/entrance/diya.png" alt="">
+        <img class="diya diya-center" src="assets/entrance/diya.png" alt="">
+        <img class="diya diya-right" src="assets/entrance/diya.png" alt="">
+        <!-- <img class="kolam" src="assets/entrance/kolam.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-1" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-2" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-3" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-4" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-5" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-6" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <img class="diya dy-7" src="assets/entrance/diya.png" alt="" aria-hidden="true" onerror="this.style.display='none'"> -->
       </div>
     </div>
 
@@ -2446,6 +2412,7 @@ a{ color:inherit; }
     <div id="envelope-hint">Tap the doors to enter</div>
   </div>
 </div>
+
 
 <!-- ===================== HEADER (invocation) ===================== -->
 <header class="invite-header">
