@@ -722,7 +722,7 @@ a{ color:inherit; }
   .hero-tagline{
     margin-top:0.5rem; font-size:0.88rem; letter-spacing:0.14em; font-style:italic;
     font-family:'Cormorant Garamond', serif; color:var(--gold-soft);
-    opacity:0; animation:rise 1s ease forwards 1.1s;
+    opacity:1; animation:rise 1s ease forwards 1.1s; font-weight:500;
   }
   @keyframes rise{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:translateY(0);} }
 
@@ -732,10 +732,11 @@ a{ color:inherit; }
     display:flex; align-items:center; justify-content:center; gap:0.9rem;
     opacity:0; animation:rise 1s ease forwards 1.25s;
   }
+
   .cd-title{
-    font-family:'Cormorant Garamond', serif; font-weight:600;
-    font-size:clamp(0.95rem, 2.4vw, 1.2rem);
-    letter-spacing:0.24em; text-transform:uppercase; text-indent:0.24em;
+    font-family:'Cormorant Garamond', serif; font-weight:700;
+    font-size:clamp(1.55rem, 7.4vw, 1.9rem);
+    text-indent:0.24em;
     color:var(--maroon); white-space:nowrap;
   }
   .cd-flourish{ width:clamp(48px, 12vw, 90px); height:auto; flex:none; }
@@ -1029,10 +1030,12 @@ a{ color:inherit; }
      above rather than floating in a separate patch of empty page */
   #rsvp{ text-align:center; padding-bottom:1vh; }
   form{ max-width:760px; margin:1.6rem auto 0; display:flex; flex-direction:column; gap:1.1rem; }
-  .rsvp-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.8rem; text-align:left; }
+  /* Since the phone + attendance pills came out, the two-column split left a
+     lone name box next to a tall textarea. Stacked instead: name spans the
+     full plate, the note sits on the line below it. */
+  .rsvp-grid{ display:grid; grid-template-columns:1fr; gap:1.3rem; text-align:left; }
   .rsvp-col{ display:flex; flex-direction:column; gap:0.9rem; }
   .rsvp-col textarea{ flex:1; min-height:120px; }
-  @media (max-width:640px){ .rsvp-grid{ grid-template-columns:1fr; } }
   input, textarea{
     font-family:'Jost', sans-serif; font-size:0.95rem;
     padding:0.85rem 1rem; border:1px solid var(--line); background:#fffdf7;
@@ -1500,7 +1503,7 @@ a{ color:inherit; }
   font-weight:700;
   }
   /* { letter-spacing:0.26em; text-indent:0.26em; font-weight:700;} */
-  .parent-card .names{ font-size:1.28rem; }
+  .parent-card .names{font-family:'Cormorant Garamond', serif; font-size:1.28rem; opacity:0.9; font-weight:700; color:var(--ink);}
 
   /* the venue card echoes the arch — this is a kalyana mandapam, after all */
   .venue-card{
@@ -1517,7 +1520,7 @@ a{ color:inherit; }
   /* countdown: a gold cartouche */
   .cd-frame{ border-radius:14px; padding:0.55rem; }
   .cd-frame::before, .cd-frame::after{ display:none; }   /* replaced by rosettes */
-  .cd-title{ letter-spacing:0.28em; text-indent:0.28em; }
+  .cd-title{text-indent:0.28em; }
   .cd-col + .cd-col::before{
     background:linear-gradient(180deg, transparent, rgba(192,138,44,0.55) 20%,
                                        rgba(192,138,44,0.55) 80%, transparent);
@@ -2283,7 +2286,7 @@ a{ color:inherit; }
   @media (max-width:560px){
     .names-block, .section-head, .parents-grid{ position:relative; z-index:2; }
     .section-title, .names{
-      text-shadow:0 0 18px var(--ivory), 0 0 34px var(--ivory);
+      text-shadow:0 0 18px var(--ivory), 0 0 34px var(--ivory); 
     }
   }
 </style>
@@ -2582,17 +2585,6 @@ a{ color:inherit; }
       <div class="rsvp-col">
         <div class="field-label">Guest Details</div>
         <input type="text" id="rsvp-name" placeholder="Your name" required>
-        <input type="tel" id="rsvp-phone" placeholder="Phone (e.g. +91 98765 43210)"
-               inputmode="tel" autocomplete="tel"
-               pattern="\+?[0-9][0-9\s\-]{7,15}"
-               title="Enter digits only, with country code — e.g. +91 98765 43210">
-        <div class="field-error" id="phone-error" aria-live="polite"></div>
-
-        <div class="field-label">Will you be joining us?</div>
-        <div class="pill-group" data-group="rsvp-status">
-          <div class="pill">Joyfully Accept</div>
-          <div class="pill">Regretfully Decline</div>
-        </div>
       </div>
       <div class="rsvp-col">
         <div class="field-label">Leave us a note</div>
@@ -2692,8 +2684,8 @@ const CONFIG = {
   // An event only needs its own venue fields if it happens somewhere else.
   mainVenue: {
     name: "TTD Kalyana Mandapam",
-    area: "Buckinghampeta, Vijayawada",
-    address: "CR Rao Marg, Buckinghampeta, Vijayawada, Andhra Pradesh 520010",
+    area: "Vijayawada",
+    address: "CR Rao Marg, Vijayawada, Andhra Pradesh 520010",
     mapUrl: "https://maps.app.goo.gl/rR64eHxnFE3RLSVs6"
   },
 
@@ -2996,29 +2988,8 @@ document.querySelectorAll('.pill-group').forEach(group => {
 });
 
 /* ---- RSVP form (front-end only) ---- */
-/* ---- Phone: accept only a leading + and digits (spaces/dashes allowed) ---- */
-const phoneInput = document.getElementById('rsvp-phone');
-const phoneError = document.getElementById('phone-error');
-phoneInput.addEventListener('input', () => {
-  // strip anything that isn't a digit, space, dash, or a single leading +
-  let v = phoneInput.value.replace(/[^\d\s+-]/g, '');
-  v = v.replace(/(?!^)\+/g, '');          // '+' only allowed at the very start
-  phoneInput.value = v;
-  phoneError.textContent = '';            // clear the message as they correct it
-});
-
 document.getElementById('rsvp-form').addEventListener('submit', function(e){
   e.preventDefault();
-
-  // Require a country code (leading +) and 8–15 digits.
-  const digits = phoneInput.value.replace(/\D/g, '');
-  if (phoneInput.value && (!phoneInput.value.trim().startsWith('+') || digits.length < 8 || digits.length > 15)) {
-    phoneError.textContent = 'Please enter a valid phone number with country code, e.g. +91 98765 43210';
-    phoneInput.focus();
-    return;
-  }
-
-  const selectedPill = this.querySelector('.pill-group .pill.selected');
 
   /* Send the RSVP to the Google Sheet. Uses mode:'no-cors' + a
      text/plain body on purpose: Apps Script web apps don't return CORS
@@ -3034,8 +3005,11 @@ document.getElementById('rsvp-form').addEventListener('submit', function(e){
       body: JSON.stringify({
         type: 'rsvp',
         name: document.getElementById('rsvp-name').value,
-        phone: phoneInput.value,
-        status: selectedPill ? selectedPill.textContent : '',
+        /* phone + status fields were removed from the form. The keys are kept
+           (empty) so the existing Google Sheet column order stays intact —
+           delete these two lines if you also trim the columns in the sheet. */
+        phone: '',
+        status: '',
         message: document.getElementById('rsvp-message').value
       })
     }).catch(() => { /* fail silently — still show thank-you below */ });
