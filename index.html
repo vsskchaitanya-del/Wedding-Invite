@@ -2288,6 +2288,241 @@ a{ color:inherit; }
       text-shadow:0 0 18px var(--ivory), 0 0 34px var(--ivory); 
     }
   }
+
+  /* ======================================================================
+     25. PHONE FIT & VERTICAL RHYTHM
+     ----------------------------------------------------------------------
+     Three things, all scoped to <=760px. Nothing here fires on a desktop,
+     so 1280 / 1366 / 1440 / 1536 / 1920 render byte-identical to today.
+     Delete this one block and the invite is exactly as it was.
+
+       a. the invocation is two lines on a phone, not six
+       b. one spacing token drives every gap down the page
+       c. plates, frames and corners scale off the SHORT edge of the
+          screen, so a 20:9 handset and a 4:3 tablet get the same
+          proportions rather than the same pixel values
+     ====================================================================== */
+
+  /* ---------- a. the invocation: two lines, not six ----------
+     The old rule stacked the three words into a column below 660px. Each
+     word carries its English meaning underneath, so a column of three
+     became six stacked lines and ate half the first screen.
+
+     It stays a ROW here — three words across, three meanings across —
+     which is the two-line reading it has on a desktop. The only reason it
+     could not hold that shape before is the 12vw gap either side; at 390px
+     that is 94px of air out of 368px, leaving 91px per column for a word
+     as long as "Avighnamasthu!!!". Collapsing the gap gives each column
+     ~118px, and the type is sized to that column rather than to the page.
+     `white-space:nowrap` guarantees the two lines; the sizes below are set
+     so nothing reaches the edge that would make it break. */
+  @media (max-width:660px){
+    .invite-header{ padding-left:6px; padding-right:6px; }
+    .blessing-line{
+      flex-direction:row;
+      align-items:flex-start;
+      justify-content:center;
+      gap:clamp(0.2rem, 1.4vw, 0.7rem);
+      margin-top:clamp(0.2rem, 1vw, 0.45rem);
+      width:100%;
+    }
+    .blessing-line > span,
+    .blessing-line .bl-l,
+    .blessing-line .bl-c,
+    .blessing-line .bl-r{
+      flex:1 1 0; min-width:0;
+      align-items:center; text-align:center;
+    }
+    .blessing-line .bl-word{
+      font-size:clamp(0.6rem, 2.8vw, 0.95rem);
+      letter-spacing:0.015em;
+      white-space:nowrap;
+      line-height:1.3;
+    }
+    .blessing-line .bl-mean{
+      margin-top:0.25rem;
+      font-size:clamp(0.33rem, 1.56vw, 0.52rem);
+      letter-spacing:0.04em; text-indent:0.04em;
+      white-space:nowrap;
+      line-height:1.3;
+    }
+
+    /* The two clamps above are sized against the VIEWPORT, which is only a
+       proxy — what the words actually have to fit inside is their own third
+       of the row, and that third also depends on the gap and the header's
+       padding. Measuring the column directly removes the guesswork: 1cqw is
+       one per cent of the span's width, so the type is always the same
+       fraction of the space it sits in, on any handset. Older browsers
+       simply keep the clamps above. */
+    @supports (width:1cqw){
+      .blessing-line > span{ container-type:inline-size; }
+      .blessing-line .bl-word{ font-size:min(1.05rem, 11.5cqw); }
+      .blessing-line .bl-mean{ font-size:min(0.58rem, 5.3cqw); }
+    }
+  }
+
+  /* ---------- b. one rhythm for the whole page ----------
+     Every vertical gap was set independently and most of them in vh:
+     sections at 8vh top and bottom, the hero at 5vh, the RSVP at 1vh, the
+     closing band at -2vh, the footer at 5vh. Two problems follow.
+
+     First, 8vh + 8vh is 135px of empty paper between the parents and the
+     venue on a 844px handset — the "huge gap" between blocks.
+
+     Second, vh is the WRONG UNIT for this. It measures the long edge of
+     the phone, so the taller and narrower the handset the more air it
+     inserts: a 20:9 Pixel gets noticeably bigger gaps than a 16:9 phone of
+     the same width, for no reason a reader would recognise. The invite is
+     a column of type; its rhythm should follow the width of that column.
+
+     So: one token, in vw with rem bounds, used everywhere. --rhythm is the
+     space BETWEEN blocks, --rhythm-tight the space WITHIN one. */
+  @media (max-width:760px){
+    :root{
+      --rhythm:       clamp(2rem, 9.5vw, 3.4rem);
+      --rhythm-tight: clamp(1rem, 4.8vw, 1.75rem);
+    }
+
+    /* the outer gaps */
+    section{
+      padding-top:var(--rhythm);
+      padding-bottom:var(--rhythm);
+    }
+    #hero{ padding-top:var(--rhythm-tight); padding-bottom:var(--rhythm); }
+    .invite-header{ padding-bottom:var(--rhythm-tight); }
+    #rsvp{ padding-bottom:var(--rhythm); }
+    /* the hanging bells occupy the top corners of this band, so the quote
+       is inset past them rather than run underneath them */
+    .closing-band{
+      margin-top:0;
+      padding-top:var(--rhythm);
+      padding-left:calc(clamp(48px, 15vw, 72px) + 10px);
+      padding-right:calc(clamp(48px, 15vw, 72px) + 10px);
+    }
+    .closing-quote{ font-size:clamp(1.02rem, 4.6vw, 1.28rem); }
+    footer{
+      padding-top:calc(var(--rhythm) + 14px);
+      padding-bottom:calc(var(--rhythm) + var(--frame-w));
+    }
+
+    /* the inner gaps — a heading, its flourish and its content should read
+       as one group, so they sit at the tight step while the step between
+       groups stays at the full one. This is what makes the page feel
+       measured rather than merely closer together. */
+    .section-sub{ margin-bottom:0.5rem; }
+    .section-title{ margin-bottom:0.15rem; }
+    .flourish{ margin:0.7rem auto var(--rhythm-tight); }
+    .header-flourish{ margin-bottom:0; }
+    section > img.diya{ margin-bottom:var(--rhythm-tight); }
+    .parents-grid{ margin-top:var(--rhythm-tight); }
+    .timeline{
+      margin-top:var(--rhythm-tight);
+      gap:var(--rhythm);
+    }
+    .cd-heading{ margin-top:var(--rhythm); }
+    .cd-bottom-flourish{ margin-top:var(--rhythm-tight); }
+    .closing-quote{ margin-top:var(--rhythm); }
+    .closing-flourish{ margin-top:var(--rhythm-tight); }
+    .rsvp-plate{ margin-top:0; }
+  }
+
+  /* ---------- c. frames that scale with the shape of the screen ----------
+     The page border sat at a flat 8px inset and the rosettes on every
+     plate at a flat 10px/15px, whatever the handset. On a 320px SE that
+     reads as a heavy band; on a 430px Pro Max it reads as a hairline gone
+     missing. Tying them to vmin — the SHORT edge — is what makes the
+     ornament hold its proportion across aspect ratios instead of across
+     one dimension only. A landscape phone and a portrait one now get the
+     same visual weight of border. */
+  @media (max-width:760px){
+    .page-frame,
+    .page-corners{ inset:clamp(6px, 2.2vmin, 12px); }
+    .page-frame{ border-radius:clamp(4px, 1.4vmin, 7px); }
+    .page-frame::before{ inset:clamp(2.5px, 1vmin, 4px); }
+    .page-frame::after { inset:clamp(6px, 2.4vmin, 9px); }
+
+    /* the rosettes struck into each plate's corners */
+    :root{
+      --plate-corner-pos: left 7px top 7px, right 7px top 7px,
+                          left 7px bottom 7px, right 7px bottom 7px;
+      --plate-corner-size: 11px 11px, 11px 11px, 11px 11px, 11px 11px;
+    }
+
+    /* the plates themselves: padding and radius in step with the border */
+    .venue-card{ padding:clamp(1.6rem, 6vw, 2.4rem) clamp(1.1rem, 4.6vw, 1.9rem); }
+    .rsvp-plate{ padding:clamp(1.4rem, 5vw, 2rem) clamp(1rem, 4.2vw, 1.7rem) clamp(1.6rem, 5.5vw, 2.2rem); }
+    .event-body{ padding:clamp(1rem, 4vw, 1.5rem) clamp(0.9rem, 3.6vw, 1.4rem); }
+    .parents-grid{ padding:clamp(1.4rem, 5.4vw, 2.2rem) clamp(1rem, 4.2vw, 1.8rem); }
+  }
+
+  /* ---------- d. the lamp above the parents was out of flow ----------
+     `.diya` is declared `position:absolute` for the lit lamps standing on
+     the doorway threshold. The same class is on the little lamp above
+     "With the Blessings of Our Families", so that one was absolutely
+     positioned too — which is why `margin:0 auto` never centred it and it
+     sat at the left edge of the column with the heading riding up over the
+     space it should have occupied. Scoping it back into normal flow is the
+     whole fix. It applies at every width because it is wrong at every
+     width. */
+  section > img.diya{
+    position:static;
+    display:block;
+    margin-left:auto; margin-right:auto;
+  }
+
+  /* ---------- e. orphans in the narrow column ----------
+     "TOGETHER, WE BEGIN OUR FOREVER!" is 31 tracked capitals. In a 327px
+     column it runs a few pixels long and breaks — and because the break
+     lands after the last word, the exclamation mark is left sitting alone
+     on a third line. `balance` splits the two lines evenly instead of
+     filling the first and orphaning the remainder, and the slightly
+     tighter tracking buys back the width that caused the break. */
+  @media (max-width:760px){
+    .hero-tagline{
+      font-size:clamp(0.72rem, 3.4vw, 0.9rem);
+      letter-spacing:0.07em; text-indent:0.07em;
+      text-wrap:balance;
+    }
+    .eyebrow, .cd-title, .closing-quote, .section-title{ text-wrap:balance; }
+
+    /* The date sits in a flex row between four emblems, so its column is
+       whatever they leave behind — 174px on a 390px handset. "AUGUST 2026"
+       and "at 11:35 in the evening" both need about 180px at their floor
+       sizes, so both were breaking onto a second line by a handful of
+       pixels. Six pixels back from the emblems and a slightly finer
+       setting puts each of them back on one line, with room to spare at
+       320px. */
+    .date-row{ gap:clamp(0.15rem, 1vw, 0.5rem); }
+    .kalash{ width:clamp(24px, 7.5vw, 46px); }
+    .lamp  { width:clamp(20px, 6vw, 40px); }
+    .d-my{
+      font-size:clamp(0.98rem, 3.6vw, 1.4rem);
+      letter-spacing:0.24em; text-indent:0.24em;
+    }
+    .d-time{ font-size:clamp(0.92rem, 3.6vw, 1.35rem); }
+  }
+
+  /* the door frame on the opening screen already sizes off min(vw, svh),
+     which is the same idea; this just keeps its floor sane on a very
+     short-and-wide screen so the doorway is never taller than the room */
+  @media (max-width:760px){
+    .dwaram{ --dwaram-w:min(94vw, 680px, 56svh); }
+  }
+
+  /* phones held sideways: the width-based token above would give a
+     landscape handset a full-screen-width rhythm, which is far too much
+     when there are only ~400px of height to spend. Cap it against the
+     short edge. */
+  @media (max-height:520px) and (orientation:landscape){
+    :root{
+      --rhythm:       clamp(1.4rem, 7vmin, 2.4rem);
+      --rhythm-tight: clamp(0.8rem, 4vmin, 1.3rem);
+    }
+    section{
+      padding-top:var(--rhythm);
+      padding-bottom:var(--rhythm);
+    }
+  }
 </style>
 </head>
 <body>
@@ -2630,9 +2865,9 @@ a{ color:inherit; }
     </div>
     <div class="peacock-wrap flip" data-reveal="right"><img class="peacock pk-r" src="assets/peacock.png" alt="Peacock with mandala" width="1184" height="1328" loading="lazy" decoding="async"></div>
   </div>
-  <div class="bottom-middle-art">
+  <!-- <div class="bottom-middle-art">
     <img src="assets/middle-clip-art.png" alt="">
-  </div>
+  </div> -->
 </footer>
 
 <script>
