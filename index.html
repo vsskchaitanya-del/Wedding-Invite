@@ -589,20 +589,20 @@ a{ color:inherit; }
   /* each word sits centred directly above its English meaning */
   .blessing-line > span{ display:flex; flex-direction:column; align-items:center; flex:2 1 0; }
   .blessing-line .bl-word{
-    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
-    font-size:clamp(1rem, 2.9vw, 1.35rem);
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:700;
+    font-size:clamp(1rem, 2.9vw, 1.25rem);
     letter-spacing:0.07em; color:var(--maroon);
   }
   .blessing-line .bl-mean{
     margin-top:0.3rem;
-    font-family:'Jost', sans-serif; font-weight:500;
+    font-family:'Jost', sans-serif; font-weight:700;
     font-size:clamp(0.52rem, 1.5vw, 0.66rem);
     letter-spacing:0.2em; text-transform:uppercase; text-indent:0.2em;
     color:var(--gold-soft);
   }
   /* left word hugs the left edge, right word hugs the right edge, the
      centre word stays centred over the middle of the header */
-  .blessing-line .bl-l,
+.blessing-line .bl-l,
 .blessing-line .bl-c,
 .blessing-line .bl-r{
     align-items:center;
@@ -614,7 +614,7 @@ a{ color:inherit; }
     .blessing-line > span,
     .blessing-line .bl-l,
     .blessing-line .bl-c,
-    .blessing-line .bl-r{ text-align:center; align-items:center; }
+    .blessing-line .bl-r{ text-align:center; align-items:center;}
   }
   /* a hairline rule to seat it as a header rather than a stray line */
   .names-flourish{
@@ -635,9 +635,10 @@ a{ color:inherit; }
      light as you tilt a card */
   .names{
     font-family:'Great Vibes', cursive; font-weight:400;
-    font-size:clamp(3.1rem, 10.5vw, 6.2rem);
+    font-size:clamp(3.1rem, 10.5vw, 6rem);
     line-height:1.4;              /* descenders (y) need the room — see below */
-    padding-bottom:0.16em;        /* background-clip:text crops to the line box */
+    padding-bottom:0.16em;   
+    letter-spacing:0.005em;     /* background-clip:text crops to the line box */
     margin:0.4rem 0 0;
     text-wrap:balance;
     background-image:linear-gradient(100deg,
@@ -714,15 +715,16 @@ a{ color:inherit; }
     text-indent:0.32em;
   }
   .d-time{
-    font-family:'Cormorant Garamond', serif; font-weight:500; font-style:italic;
+    font-family:'Cormorant Garamond', serif; font-weight:700; 
     font-size:clamp(1.1rem, 2.8vw, 1.35rem);
     letter-spacing:0.03em; color:var(--maroon);
-    margin-top:0.35rem;
+    margin-top:0.05rem;
   }
   .hero-tagline{
-    margin-top:0.5rem; font-size:0.88rem; letter-spacing:0.14em; font-style:italic;
+    font-size:0.9rem; letter-spacing:0.1em; text-indent:0.32em;
     font-family:'Cormorant Garamond', serif; color:var(--gold-soft);
-    opacity:1; animation:rise 1s ease forwards 1.1s; font-weight:500;
+    opacity:1; animation:rise 1s ease forwards 1.1s; font-weight:900;
+    text-transform:uppercase;
   }
   @keyframes rise{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:translateY(0);} }
 
@@ -829,8 +831,8 @@ a{ color:inherit; }
   [data-reveal="scale"]{ transform:scale(calc(0.86 + var(--p) * 0.14)); }
 
   .section-title{
-    text-align:center; font-size:clamp(1.9rem,4.4vw,2.7rem); color:var(--maroon);
-    line-height:1.25; text-wrap:balance;
+    text-align:center; font-size:clamp(1.9rem,4.4vw,2.4rem); color:var(--maroon);
+    line-height:1.25; text-wrap:balance; font-weight: 700;
     margin-bottom:0.2rem;
   }
   .section-sub{
@@ -1087,13 +1089,11 @@ a{ color:inherit; }
   }
   .closing-quote{
     font-family:'Cormorant Garamond', serif;
-    font-style:italic;
-    font-weight:500;
-    font-size:clamp(1.05rem, 3.1vw, 1.5rem);
+    font-weight:900;
+    font-size: 1.28rem;
     letter-spacing:0.04em;
     color:var(--maroon);
-    max-width:32ch;
-
+    max-width:28ch;
     margin:3rem auto 0;   /* ← Adds space above the quote */
 
     position:relative;
@@ -1249,7 +1249,7 @@ a{ color:inherit; }
 
     border-radius: 6px;
 
-    border:3.5px solid #c78708e9;
+    border:1.5px solid #c78708e9;
 
     box-shadow:
         inset 0 0 1px rgba(248,233,179,.7),
@@ -1373,7 +1373,7 @@ a{ color:inherit; }
     font-family:'Marcellus', 'Cormorant Garamond', serif;
   }
   /* Marcellus ships one weight; asking for 600 only gets a synthetic bold */
-  .d-dow, .d-my, #countdown .lab, .section-sub, .eyebrow{ font-weight:400; }
+  .d-dow, .d-my, #countdown .lab, .section-sub, .eyebrow{ font-weight:700; }
   .d-dow{ letter-spacing:0.42em; text-indent:0.42em; }
   .d-my { letter-spacing:0.36em; text-indent:0.36em; }
 
@@ -1632,7 +1632,6 @@ a{ color:inherit; }
 
   /* ---------- 10. closing band ---------- */
   .closing-quote{
-    font-size:clamp(1.05rem, 3.1vw, 1.5rem);
     text-shadow:0 1px 0 rgba(255,255,255,0.7);
   }
   .bell-img-flip{ transform:scaleX(-1); }
@@ -1796,12 +1795,12 @@ a{ color:inherit; }
   .bottom-middle-art{
     display: flex;
     justify-content: center;  /* Space below the peacocks */
-    margin-bottom: -45px;  /* Slight overlap with the page border if desired */
+    margin-bottom: -44px;  /* Slight overlap with the page border if desired */
     pointer-events: none;
 }
 
   .bottom-middle-art img{
-      width: clamp(500px, 70vw, 750px);
+      width: clamp(500px, 70vw, 700px);
       max-width: 80%;
       height: auto;
       display: block;
@@ -1810,7 +1809,7 @@ a{ color:inherit; }
      With the lattice gone the maroon panels rely on gradient alone, so the
      type on them needs a touch more presence, and the arch — now a genuine
      ivory panel — can take a slightly finer gold edge. */
-  .hero-tagline{ color:var(--gold-soft); opacity:0.95; }
+  .hero-tagline{ color:var(--gold-soft);}
   .rsvp-plate .field-label{ color:#f0cf82; }
   .rsvp-plate input::placeholder, .rsvp-plate textarea::placeholder{
     color:rgba(247,245,235,0.52);
@@ -1858,9 +1857,9 @@ a{ color:inherit; }
      medallion, the names, the date and the tagline is the only thing doing
      that job, so it is set explicitly rather than left to defaults. */
   .hero-inner{ margin-top:0; }
-  .eyebrow{ font-size:0.66rem; letter-spacing:0.36em; text-indent:0.36em; }
+  .eyebrow{ font-size:0.8rem; letter-spacing:0.3em; text-indent:0.36em; }
   .date-row{ margin-top:clamp(1.2rem, 2.6vw, 1.9rem); }
-  .hero-tagline{ margin-top:0.8rem; }
+  /* .hero-tagline{ margin-top:0.025rem; } */
   /* three stacked lines are much taller than one, so the space around them
      is pulled in to keep the hero close to a single screen */
   #hero{ padding-top:clamp(1rem, 3vh, 2.4rem); padding-bottom:5vh; }
@@ -1987,7 +1986,7 @@ a{ color:inherit; }
     .blessing-line > span,
     .blessing-line .bl-l,
     .blessing-line .bl-c,
-    .blessing-line .bl-r{ text-align:center; align-items:center; }
+    .blessing-line .bl-r{ text-align:center; align-items:center;}
   }
 
   /* ---------- e. the temple watermarks in the venue card ---------- */
@@ -2141,7 +2140,7 @@ a{ color:inherit; }
     .event-body{ padding:1rem 0.9rem; }
     .cd-title{ font-size:0.86rem; letter-spacing:0.18em; text-indent:0.18em; }
     .section-title{ font-size:clamp(1.55rem, 7.4vw, 1.9rem); }
-    .closing-quote{ max-width:26ch; }
+    .closing-quote{ max-width:28ch; }
   }
 
   /* ---------- o. phones held sideways ---------- */
@@ -2448,7 +2447,7 @@ a{ color:inherit; }
       <img class="kalash kalash-r" alt="Kalash" aria-hidden="true">
       <img class="lamp lamp-r" alt="Deepam" aria-hidden="true">
     </div>
-    <div class="hero-tagline" id="hero-tagline">Together, we begin our forever.</div>
+    <div class="hero-tagline" id="hero-tagline">Together, we begin our forever!</div>
    </div><!-- /.prabha -->
 
         <div class="cd-heading">
@@ -2515,7 +2514,7 @@ a{ color:inherit; }
      aria-hidden="true"
      onerror="this.style.display='none'"
      data-reveal="scale">
-  <h2 class="section-title" data-reveal data-stagger="1">With the Blessings of Our Beloved Parents</h2>
+  <h2 class="section-title" data-reveal data-stagger="1">With the Blessings of Our Families</h2>
   <div class="flourish" data-reveal data-stagger="2">
     <i></i>
 </div>
@@ -2606,7 +2605,7 @@ a{ color:inherit; }
         alt=""
   >
   </div>
-  <p class="closing-quote">&ldquo;Two hearts, two families, one beautiful beginning&rdquo;</p>
+  <p class="closing-quote">&ldquo;Two Hearts, Two Families, One Beautiful Beginning !&rdquo;</p>
   <div class="closing-flourish" aria-hidden="true">
     <img src="assets/closing-flourish.png"
          alt=""
@@ -2662,9 +2661,9 @@ const CONFIG = {
   // partner1 shows first, on the left of the ampersand.
   partner1: "Chaitanya",   // groom
   partner2: "Sandhya",     // bride
-  blessingLine: "Srirasthu! Shubhamasthu!! Avighnamasthu!!!",
+  blessingLine: "Srirasthu! Shubhamasthu! Avighnamasthu!",
   blessingMeanings: ["May there be prosperity", "May there be auspiciousness", "May there be happiness"],
-  tagline: "Together, we begin our forever.",
+  tagline: "Together, we begin our forever !",
   countdownLabel: "Counting Down To Our Big Day",
 
   // The main wedding day. This single value drives BOTH the countdown and
@@ -2692,7 +2691,7 @@ const CONFIG = {
   // ---- Background music (optional) ----
   // Drop an mp3 in the same folder and put its filename here, e.g. "song.mp3".
   // Leave blank to keep the music button inert.
-  backgroundAudioSrc: "assets/parth-chandiramani-apoorva-krishna-flute-violin.mp3",
+  backgroundAudioSrc: "assets/audio/parth-chandiramani-apoorva-krishna-flute-violin.mp3",
 
   // ---- Google Sheets connection (RSVPs + visitor count) ----
   // Paste the "Web app" URL you get after deploying the Apps Script
