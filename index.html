@@ -2621,6 +2621,40 @@ a{ color:inherit; }
       max-width:100%;
     }
   }
+
+  /* ======================================================================
+     28. THE ORDINAL ON THE HERO NUMERAL
+     ----------------------------------------------------------------------
+     "30" becomes "30th". The suffix is set small and raised so the numeral
+     stays the anchor of the group rather than becoming two equal glyphs —
+     the lamps and kalashes either side are composed against the figure, not
+     against a word.
+
+     Two things to be careful of, both inherited from .d-num:
+       - line-height is 0.88 and the block is a flex column, so raising the
+         suffix with vertical-align would grow the line box and push the
+         month line down. `position:relative` moves the glyph without
+         touching the line box, so nothing below it shifts.
+       - but .d-num is background-clip:text over color:transparent, and a
+         POSITIONED descendant paints above the parent's background rather
+         than being clipped by it. Inheriting the transparent fill there
+         means the suffix renders as nothing at all. It therefore needs a
+         colour of its own. The figure's gradient runs from --maroon at 28%
+         to #a52036 at midpoint and back, so at the scale of two 0.33em
+         glyphs, flat --maroon is indistinguishable from the gradient it
+         is sitting beside.
+     ====================================================================== */
+  .d-ord{
+    font-size:0.33em;
+    letter-spacing:0.02em;
+    margin-left:0.04em;
+    line-height:1;
+    vertical-align:baseline;
+    position:relative;
+    top:-1.45em;         /* the figure's cap height less the suffix's own, expressed
+                            in the suffix's em so it holds at every clamp step */
+    color:var(--maroon);
+  }
 </style>
 </head>
 <body>
@@ -3096,6 +3130,15 @@ document.getElementById('footer-names').textContent = `${CONFIG.partner1} & ${CO
 document.getElementById('footer-date').textContent =
   new Date(CONFIG.weddingDateISO).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase();
 
+/* "st / nd / rd / th" for the hero numeral. The teens are the exception —
+   11, 12 and 13 take "th" even though they end in 1, 2 and 3 — so those are
+   checked before the last digit is. Derived from the date rather than typed
+   in, so it stays correct if weddingDateISO ever changes. */
+function ordinalSuffix(n){
+  if (n % 100 >= 11 && n % 100 <= 13) return 'th';
+  return ['th','st','nd','rd'][n % 10] || 'th';
+}
+
 /* ---- The date, set as a ceremonial figure ----
    Built from weddingDateISO, the same value the countdown uses, so the two
    can never disagree. If that value can't be parsed, falls back to printing
@@ -3119,7 +3162,8 @@ function buildDateBlock(){
     '<span class="d-dow">' + dow + '</span>' +
     '<span class="d-figure">' +
       '<i class="d-rule"></i>' +
-      '<span class="d-num">' + d.getDate() + '</span>' +
+      '<span class="d-num">' + d.getDate() +
+        '<span class="d-ord">' + ordinalSuffix(d.getDate()) + '</span></span>' +
       '<i class="d-rule"></i>' +
     '</span>' +
     '<span class="d-my">' + month + ' ' + d.getFullYear() + '</span>' +
