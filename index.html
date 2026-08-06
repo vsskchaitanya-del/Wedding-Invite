@@ -2523,6 +2523,104 @@ a{ color:inherit; }
       padding-bottom:var(--rhythm);
     }
   }
+
+
+  /* ======================================================================
+     26. THE INVOCATION vs THE FIXED ORNAMENT
+     ----------------------------------------------------------------------
+     Block 25 turned the invocation back into a full-width row. That was the
+     right shape, but it put the two outer words underneath ornament that is
+     PINNED to the page rather than laid out with it, so nothing in normal
+     flow could push it aside:
+
+       .page-corners .cnr  the carved fan in each top corner. At 412px it
+                           occupies y 9-77 and x 335-403, while
+                           "Avighnamasthu!" runs to x 394 across y 51-71 —
+                           so the fan paints straight over the last glyphs.
+
+       .edge-left/-right   the hanging lotus-and-bell strings, fixed at
+                           x 3-22 and x 390-409. "MAY THERE BE PROSPERITY"
+                           starts at x 16, i.e. inside the left string.
+
+     Both sit at z-index 40 against the header's z-index 1, so the only
+     available fix is to move one or the other. The type is the content,
+     so the ornament gives way.
+     ====================================================================== */
+
+  /* the fan's own size, restated so the clearance below is DERIVED from it
+     rather than guessed. Keep in step with .page-corners .cnr in 23 and 24. */
+  :root{ --cnr-w: clamp(88px, 16.5vw, 145px); }
+  @media (max-width:560px){ :root{ --cnr-w: clamp(50px, 16.5vw, 84px); } }
+
+  @media (max-width:760px){
+    /* Drop the words clear of the fans. The offset tracks the fan's own
+       width instead of being a fixed number that would be wrong at half
+       the widths. It goes on the blessing, NOT on the header: a padding on
+       the header (or a negative margin on .toran-row to compensate) moves
+       the festoon too, and the festoon has to stay hanging from the top
+       edge of the page. */
+    .blessing-line{ margin-top:max(0px, calc(var(--cnr-w) - 33px)); }
+
+    /* Start the hanging strings below the invocation. They are fixed, so
+       this only changes where they begin in the viewport — they still run
+       the height of the page as you scroll. */
+    .edge-left, .edge-right{ top:clamp(160px, 32vw, 230px); }
+
+    /* and a little more air at the sides, so the meanings are not flush
+       against the strings' column even where they no longer meet */
+    .invite-header{ padding-left:10px; padding-right:10px; }
+  }
+  @media (min-width:561px) and (max-width:760px){
+    /* above 560 the toranam artwork is taller, so the words already start
+       lower and need less of a push */
+    .blessing-line{ margin-top:max(0px, calc(var(--cnr-w) - 56px)); }
+  }
+
+  /* ======================================================================
+     27. THE CLOSING BAND: BELLS HUNG FROM THE RSVP PLATE
+     ----------------------------------------------------------------------
+     Three changes, all on phones only:
+       a. the band sits flush under the maroon plate, so the chains read as
+          hanging FROM it rather than floating in the paper below it
+       b. the bells move in from the page edge to the plate's own edge
+       c. the quote is centred against the bells rather than sitting under
+          them
+     ====================================================================== */
+  @media (max-width:760px){
+    /* the same expression every section uses for its content inset, named
+       so the bells can be hung on exactly the plate's edge rather than on
+       a number that happens to match it today */
+    :root{
+      --gutter: max(clamp(1.5rem, 8vw, 4rem), calc(var(--frame-w) + 0.7rem));
+      --bell-w: clamp(40px, 11.5vw, 60px);
+    }
+
+    /* a. close the gap so the chains start at the plate's bottom edge */
+    #rsvp{ padding-bottom:0; }
+    .closing-band{
+      padding-top:0;
+      /* the quote clears the bells on both sides */
+      padding-left:calc(var(--gutter) + var(--bell-w) + 10px);
+      padding-right:calc(var(--gutter) + var(--bell-w) + 10px);
+      min-height:calc(var(--bell-w) * 1.5 + 1.6rem);
+      /* a little air before the footer's saree border */
+      padding-bottom:clamp(0.5rem, 2.5vw, 1rem);
+    }
+
+    /* b. hang them on the plate's edges, not the page's */
+    .bell-corner{ width:var(--bell-w); top:0; }
+    .bell-l{ left:var(--gutter); }
+    .bell-r{ right:var(--gutter); }
+
+    /* c. the bell artwork is 1024x1536, so its height is 1.5x its width and
+       its centre sits at 0.75x. Pulling the quote's own half-height back off
+       that lands the two on the same line. */
+    .closing-quote{
+      font-size:clamp(0.92rem, 4.1vw, 1.18rem);
+      margin-top:max(0px, calc(var(--bell-w) * 0.75 - 1.4em));
+      max-width:100%;
+    }
+  }
 </style>
 </head>
 <body>
@@ -2865,9 +2963,9 @@ a{ color:inherit; }
     </div>
     <div class="peacock-wrap flip" data-reveal="right"><img class="peacock pk-r" src="assets/peacock.png" alt="Peacock with mandala" width="1184" height="1328" loading="lazy" decoding="async"></div>
   </div>
-  <!-- <div class="bottom-middle-art">
+  <div class="bottom-middle-art">
     <img src="assets/middle-clip-art.png" alt="">
-  </div> -->
+  </div>
 </footer>
 
 <script>
